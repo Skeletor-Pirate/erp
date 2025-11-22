@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ERP Login — Cyber Hacker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <main>
+    <div id="login-container" aria-labelledby="login-heading" role="region">
+      <h2 id="login-heading">Student Login</h2>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <input id="em" type="email" placeholder="Email" autocomplete="username" required />
+          <label for="em" class="field-label">EMAIL</label>
+        </div>
+
+        <div class="field">
+          <input id="pas" type="password" placeholder="Password" autocomplete="current-password" minlength="5" required />
+          <label for="pas" class="field-label">PASSWORD</label>
+        </div>
+
+        <button id="login" type="submit" aria-label="Login" class="btn">Login</button>
+      </form>
+  </main>
+
+  <div id="effects"></div>
+
+  <div id="toast" role="status" aria-live="polite"><span class="emoji"></span><span class="msg"></span></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

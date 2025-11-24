@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ERP Login — Cyber Hacker</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student ERP Login</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="bg-canvas"></canvas>
 
-  <main>
-    <div id="login-container" aria-labelledby="login-heading" role="region">
-      <h2 id="login-heading">Student Login</h2>
+<canvas id="bg-canvas"></canvas>
 
-      <form id="login-form" novalidate>
+<main>
+    <div id="login-container">
+        <h2>Student Login</h2>
+
         <div class="field">
-          <input id="em" type="email" placeholder="Email" autocomplete="username" required />
-          <label for="em" class="field-label">EMAIL</label>
+            <span class="field-label">EMAIL</span>
+            <input type="email" id="em" placeholder="Enter your email">
         </div>
 
         <div class="field">
-          <input id="pas" type="password" placeholder="Password" autocomplete="current-password" minlength="5" required />
-          <label for="pas" class="field-label">PASSWORD</label>
+            <span class="field-label">PASSWORD</span>
+            <input type="password" id="pas" placeholder="Enter password">
         </div>
 
-        <button id="login" type="submit" aria-label="Login" class="btn">Login</button>
-      </form>
-  </main>
+        <button id="login" class="btn">Login</button>
+    </div>
+</main>
 
-  <div id="effects"></div>
+<div id="toast"></div>
 
-  <div id="toast" role="status" aria-live="polite"><span class="emoji"></span><span class="msg"></span></div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

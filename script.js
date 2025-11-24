@@ -1,171 +1,105 @@
-const emailEl = document.getElementById("em");
-const passEl  = document.getElementById("pas");
-const btnEl   = document.getElementById("login");
-const formEl  = document.getElementById("login-form");
-const toast   = document.getElementById("toast");
-const effects = document.getElementById("effects");
-const loginCard = document.getElementById("login-container");
-const canvas = document.getElementById("bg-canvas");
-const ctx = canvas.getContext("2d");
+/* -------------------------
+   MATRIX RAIN BACKGROUND
+-------------------------- */
 
-function fitCanvas() {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
-fitCanvas();
-addEventListener('resize', fitCanvas);
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-const cols = Math.floor(window.innerWidth / 14);
-const drops = new Array(cols).fill(1);
-const letters = '01<>\\/[]{}()*&^%$#@!abcdefghijklmnopqrstuvwxyz0123456789';
+const fontSize = 18;
+let columns = Math.floor(window.innerWidth / fontSize);
+let drops = Array(columns).fill(1);
 
-function drawMatrix() {
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+function drawMatrix(){
+    ctx.fillStyle = "rgba(0,0,0,0.06)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  ctx.font = '14px monospace';
-  for (let i = 0; i < drops.length; i++) {
-    const text = letters[Math.floor(Math.random() * letters.length)];
-    const x = i * 14;
-    const y = drops[i] * 14;
-    ctx.fillStyle = 'rgba(0,255,102,0.07)';
-    ctx.fillText(text, x, y);
+    ctx.fillStyle = "rgba(0,255,102,0.45)";
+    ctx.font = fontSize + "px monospace";
 
-    if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
-    drops[i]++;
-  }
-}
-setInterval(drawMatrix, 80);
+    for(let i=0; i<drops.length; i++){
+        let char = String.fromCharCode(0x30A0 + Math.random()*96);
+        ctx.fillText(char, i*fontSize, drops[i]*fontSize);
 
-const particles = [];
-function spawnParticle() {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: canvas.height + 10,
-    vx: (Math.random()-0.5)*0.4,
-    vy: - (1 + Math.random()*1.6),
-    life: 80 + Math.random()*80,
-    r: 1 + Math.random()*2
-  });
-}
-function drawParticles() {
-  for (let i=particles.length-1;i>=0;i--) {
-    const p = particles[i];
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life--;
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(0,255,102,${Math.max(0, p.life/160) * 0.18})`;
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-    if (p.life <= 0) particles.splice(i,1);
-  }
-}
-setInterval(()=>{ if(Math.random()>0.6) spawnParticle(); }, 160);
-setInterval(drawParticles, 120);
-
-function showToast(message, emoji='⚠️', ms=1500) {
-  toast.querySelector('.emoji') ? null : toast.insertAdjacentHTML('afterbegin','<span class="emoji"></span>');
-  toast.style.display = 'block';
-  toast.querySelector('.emoji').textContent = emoji;
-  toast.querySelector('.msg').textContent = message;
-  toast.style.opacity = '1';
-  clearTimeout(toast._t);
-  toast._t = setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=> toast.style.display='none', 400); }, ms);
-}
-
-function playShockwave(x, y, color='rgba(0,255,102,0.18)') {
-  const wave = document.createElement('div');
-  wave.className = 'effect-wave';
-  wave.style.left = x + 'px';
-  wave.style.top  = y + 'px';
-  wave.style.background = `radial-gradient(circle, ${color}, rgba(0,255,102,0.03) 40%, transparent 60%)`;
-  effects.appendChild(wave);
-  setTimeout(()=> wave.remove(), 1000);
-}
-
-function playHolo() {
-  const holo = document.createElement('div');
-  holo.className = 'holo';
-  loginCard.appendChild(holo);
-  setTimeout(()=> holo.remove(), 1000);
-}
-
-function playButtonRipple(btn) {
-  btn.classList.remove('ripple');
-  void btn.offsetWidth;
-  btn.classList.add('ripple');
-}
-
-function errorGlitch() {
-  loginCard.classList.remove('error-glitch');
-  void loginCard.offsetWidth;
-  loginCard.classList.add('error-glitch');
-}
-
-function submitHandler(event){
-  event.preventDefault();
-  playShockwave(event.clientX, event.clientY);
-  playButtonRipple(btnEl);
-
-  const em = emailEl.value.trim();
-  const pas = passEl.value;
-
-  if (em === "" || pas === "") {
-    alert("Please fill all the fields");
-    showToast("Please fill all the fields", "⚠️");
-    errorGlitch();
-    return;
-  }
-
-  alert("Login Successful");
-  showToast("Welcome back, Agent.", "✅");
-  playHolo();
-
-  passEl.value = "";
-
-  for(let i=0;i<6;i++){
-    particles.push({
-      x: canvas.width/2 + (Math.random()-0.5)*120,
-      y: canvas.height/2 + (Math.random()-0.5)*60,
-      vx: (Math.random()-0.5)*3,
-      vy: - (1 + Math.random()*2),
-      life: 60 + Math.random()*80,
-      r: 1 + Math.random()*3
-    });
-  }
-}
-
-btnEl.addEventListener('click', submitHandler);
-formEl.addEventListener('submit', submitHandler);
-
-function inputPulse(e){
-  const rect = e.target.getBoundingClientRect();
-  particles.push({
-    x: rect.left + Math.random()*rect.width,
-    y: rect.top + rect.height - 6,
-    vx: (Math.random()-0.5)*0.6,
-    vy: - (0.6 + Math.random()*1.2),
-    life: 40 + Math.random()*40,
-    r: 0.8 + Math.random()*1.4
-  });
-}
-emailEl.addEventListener('input', inputPulse);
-passEl.addEventListener('input', inputPulse);
-
-[emailEl, passEl].forEach(el=>{
-  el.addEventListener('keydown', (ev)=>{
-    if(ev.key === 'Enter') {
-      const rect = ev.target.getBoundingClientRect();
-      playShockwave(rect.left + rect.width/2, rect.top + rect.height/2, 'rgba(0,255,102,0.12)');
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975){
+            drops[i] = 0;
+        }
+        drops[i]++;
     }
-  });
+}
+setInterval(drawMatrix, 60);
+
+
+/* -------------------------
+   LOGIN HANDLER
+-------------------------- */
+
+const loginBtn = document.getElementById("login");
+const email = document.getElementById("em");
+const pass = document.getElementById("pas");
+const container = document.getElementById("login-container");
+const toast = document.getElementById("toast");
+
+loginBtn.addEventListener("click", submit);
+
+function submit(event){
+    event.preventDefault();
+
+    let em = email.value.trim();
+    let pw = pass.value.trim();
+
+    if(em === "" || pw === ""){
+        toastMsg("⚠️ Fill all fields!", false);
+        shake();
+        return;
+    }
+
+    toastMsg("✔ Login Successful", true);
+    setTimeout(()=> window.location.href="dashboard.html", 700);
+}
+
+
+/* -------------------------
+   SHAKE EFFECT
+-------------------------- */
+
+function shake(){
+    container.classList.add("error-glitch");
+    setTimeout(()=> container.classList.remove("error-glitch"), 600);
+}
+
+
+/* -------------------------
+   RIPPLE EFFECT
+-------------------------- */
+
+loginBtn.addEventListener("click", (e)=>{
+    let wave = document.createElement("span");
+    wave.classList.add("effect-wave");
+    wave.style.left = e.clientX - loginBtn.offsetLeft + "px";
+    wave.style.top = e.clientY - loginBtn.offsetTop + "px";
+    loginBtn.appendChild(wave);
+
+    setTimeout(()=> wave.remove(), 900);
 });
 
-(function loop(){
-  requestAnimationFrame(loop);
-})();
 
-setTimeout(()=> {
-  playShockwave(window.innerWidth/2, window.innerHeight/2, 'rgba(0,255,102,0.06)');
-}, 350);
+/* -------------------------
+   TOAST
+-------------------------- */
+
+function toastMsg(msg, success){
+    toast.innerHTML = msg;
+    toast.style.display = "block";
+    toast.style.borderColor = success 
+        ? "rgba(0,255,120,0.4)"
+        : "rgba(255,60,60,0.4)";
+
+    setTimeout(()=> toast.style.display="none", 1500);
+}
